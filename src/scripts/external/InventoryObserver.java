@@ -1,4 +1,4 @@
-package scripts.tabber.external;
+package scripts.external;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
@@ -89,7 +89,7 @@ public final class InventoryObserver extends Thread {
      * Passes along the "event" to all of our sublisteners
      * @param id
      *              The ID of the item removed
-     * @param count
+     * @param removeCount
      *              The count of the item removed
      */
     private void notifyListenersOfRemoval(int id, int removeCount) {

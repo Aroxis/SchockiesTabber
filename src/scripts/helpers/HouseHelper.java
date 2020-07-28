@@ -1,4 +1,4 @@
-package scripts.tabber.helpers;
+package scripts.helpers;
 
 import java.util.ArrayList;
 import java.util.HashSet;

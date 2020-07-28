@@ -1,4 +1,4 @@
-package scripts.tabber.external;
+package scripts.external;
 
 /**
  * Receives notifications from the inventory observer

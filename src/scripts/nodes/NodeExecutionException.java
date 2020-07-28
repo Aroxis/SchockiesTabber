@@ -1,4 +1,4 @@
-package scripts.tabber.nodes;
+package scripts.nodes;
 
 public class NodeExecutionException extends Exception {
 

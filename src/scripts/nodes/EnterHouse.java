@@ -1,13 +1,15 @@
-package scripts.tabber.nodes;
+package scripts.nodes;
 
-import scripts.tabber.helpers.HouseHelper;
+import org.tribot.api2007.Inventory;
+import scripts.Main;
+import scripts.helpers.HouseHelper;
 import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSObject;
-import scripts.tabber.Areas;
+import scripts.Areas;
 
 import static org.tribot.api.General.sleep;
 
@@ -21,7 +23,7 @@ public class EnterHouse extends Node {
             Camera.turnToTile(portal.getPosition());
         }
 
-        portal.click("Friend's house");
+        approachAndInteract(portal, "Friend's house", 0);
 
         RSInterface enterHouseDialogue = Interfaces.get(162, 44);
         enterHouseDialogue.hover();
@@ -41,15 +43,26 @@ public class EnterHouse extends Node {
             Keyboard.pressEnter();
         }
 
-        sleep(2000, 4000);
-        waitWhileEnteringPortal(true);
+        while (inRimmington()) {
+            sleep(10);
+
+            if (Main.cannotAccessHouse()) {
+                waitReaction();
+                execute();
+                return;
+            }
+
+            while (isLoading()) {
+                sleep(10);
+            }
+        }
     }
 
     private void waitWhileEnteringPortal(boolean enteringHouse) {
         int failCount = 0;
 
         if (enteringHouse) {
-            while (Areas.rimmingtonArea.contains(Player.getPosition()) || isLoading()) {
+            while (!inRimmington() && !isLoading()) {
                 if (failCount > 30) {
                     break;
                 }
@@ -58,7 +71,7 @@ public class EnterHouse extends Node {
                 failCount++;
             }
         } else {
-            while (!inRimmington() || isLoading()) {
+            while (inRimmington() || isLoading()) {
                 if (failCount > 30) {
                     break;
                 }
@@ -71,6 +84,6 @@ public class EnterHouse extends Node {
 
     @Override
     public boolean validate() {
-        return false;
+        return Inventory.isFull() && inRimmington();
     }
 }

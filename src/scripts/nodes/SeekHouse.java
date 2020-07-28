@@ -1,6 +1,6 @@
-package scripts.tabber.nodes;
+package scripts.nodes;
 
-import scripts.tabber.helpers.HouseHelper;
+import scripts.helpers.HouseHelper;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Player;
@@ -8,7 +8,7 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSInterfaceComponent;
 import org.tribot.api2007.types.RSObject;
-import scripts.tabber.Areas;
+import scripts.Areas;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,18 +18,13 @@ import static org.tribot.api.General.sleep;
 public class SeekHouse extends Node {
     @Override
     public void execute() throws Exception {
+        while (isLoading() || getSingleObject("House Advertisement") == null) {
+            sleep(10);
+        }
+
         RSObject advert = getSingleObject("House Advertisement");
 
-        if (!advert.isOnScreen()) {
-            sleep(100, 300);
-            Camera.turnToTile(advert.getPosition());
-        }
-
-        sleep(500, 1000);
-
-        while (!advert.click()) {
-            abc.sleep(100);
-        }
+        approachAndInteract(advert, "View", 0);
 
         while (Interfaces.get(52, 9 ) == null) {
             sleep(10);
@@ -37,12 +32,11 @@ public class SeekHouse extends Node {
 
         sleep(200, 1500);
 
-        RSInterfaceChild playerHousesesList = Interfaces.get(52, 9 );
         RSInterface closeButton = Interfaces.get(52, 3, 13);
-        RSInterfaceChild filterCheckbox = Interfaces.get(52, 28);
+        // RSInterfaceChild filterCheckbox = Interfaces.get(52, 28);
 
         // filterCheckbox.click();
-        sleep(3000, 10000);
+        sleep(3000, 7000);
         scrapeOwnerNames();
         closeButton.click();
     }

@@ -1,4 +1,4 @@
-package scripts.tabber.nodes;
+package scripts.nodes;
 
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.input.Mouse;
@@ -6,7 +6,8 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
-import scripts.tabber.Areas;
+import scripts.Areas;
+import scripts.Main;
 
 import static org.tribot.api.General.sleep;
 
@@ -25,50 +26,36 @@ public class WithdrawClay extends Node {
             throw new NodeExecutionException("Could not find Phials.");
         }
 
-        sleep(100,300);
-
-        //if (!phials.isOnScreen()) {
-        Camera.turnToTile(phials);
-        //}
+        waitReaction();
 
         if (GameTab.getOpen() != GameTab.TABS.INVENTORY) {
             Inventory.open();
         }
 
-        if (!Game.getSelectedItemName().equals(notedClay.name)) {
-            notedClay.click();
-        }
+        notedClay.click();
 
-        sleep(400, 3000);
-        Mouse.click(phials.getPosition().getHumanHoverPoint(), 3);
-        sleep(200, 300);
+        approachAndInteract(phials, "Use Soft clay -> Phials", notedClay.getID());
 
-        while (!DynamicClicking.clickRSNPC(phials, "Use Soft clay -> Phials")) {
-            sleep(200, 400);
-        }
+        RSInterface dialogue = Interfaces.get(219,1,3);
+        while (Interfaces.get(219,1,3) == null || dialogue.isHidden()) {
+            waitReaction();
+            dialogue = Interfaces.get(219,1,3);
 
-        while (!Player.isMoving()){
-            sleep(5);
-        }
-
-        int msWaitedForPhialsSequence = 0;
-
-        waitWhileWalking();
-        while (Interfaces.get(219,1,3) == null) {
-            sleep(200);
-            msWaitedForPhialsSequence += 200;
+            if (Main.misClickCheck()) {
+                execute();
+                return;
+            }
+            /*msWaitedForPhialsSequence += 200;
 
             if (msWaitedForPhialsSequence >= 3000) {
                 return;
-            }
+            }*/
         }
 
-        sleep(100,500);
-
-        RSInterface dialogue = Interfaces.get(219,1,3);
+        sleep(100,300);
 
         while(!dialogue.click()) {
-            sleep(300, 1000);
+            sleep(100);
         }
 
         while(!Inventory.isFull()) {
